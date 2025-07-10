@@ -1,0 +1,117 @@
+# DEFAULT
+spring:
+  mvc:
+    servlet:
+      path: /api/download/v1
+    log-request-details: false
+    log-resolved-exception: false
+  jpa:
+    hibernate.ddl-auto: none
+    show-sql: false
+    open-in-view: false
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: warn
+    ex.org.project.downloadService:
+      DownloadServiceApplication: info
+    org.springframework.web.servlet:
+      DispatcherServlet: trace
+      mvc.method.annotation:
+        HttpEntityMethodProcessor: info
+
+s3:
+  download-directory: "workingDirectory/"
+  variables-page-file-path: ${VariablesPagePath}
+  variable-report-file-path: ${VariablesReportPath}
+  study-uuid-spreadsheet-path: ${UuidSpreadsheetPath}
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: never
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health
+
+# RAS configuration
+ras:
+  url: ${rasurl}
+  client:
+    id: ${rasclientid}
+    secret: ${rasclientsecret}
+
+---
+# LOCAL
+
+spring:
+  jpa:
+    show-sql: true
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:postgresql://dev-postgresql.cxew5pn6q5af.us-east-2.rds.amazonaws.com:5432/dev
+    username: ${db_username}
+    password: ${db_password}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  pattern:
+    console: "[%boldMagenta(DOWNLOAD)] [%boldGreen(LOCAL)] %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight([%5p]) --- [%cyan(%15.15t)] %-40.40logger{1.} %boldYellow(::) %m%n%wEx"
+
+---
+# DEV
+
+spring:
+  jpa:
+    show-sql: true
+  config:
+    import: aws-secretsmanager:application_dev
+    activate:
+      on-profile: dev
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  pattern:
+    console: "[%boldMagenta(DOWNLOAD)] [%boldGreen(DEV)] %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight([%5p]) --- [%cyan(%15.15t)] %-40.40logger{1.} %boldYellow(::) %m%n%wEx"
+
+---
+# TEST
+
+spring:
+  config:
+    import: aws-secretsmanager:application_test
+    activate:
+      on-profile: test
+
+logging:
+  pattern:
+    console: "[DOWNLOAD] [TEST] %d{yyyy-MM-dd HH:mm:ss.SSS} [%5p] --- [%15.15t] %-40.40logger{1.} :: %m%n%wEx"
+
+---
+# PROD
+
+spring:
+  config:
+    import: aws-secretsmanager:application_prod
+    activate:
+      on-profile: prod
+
+logging:
+  pattern:
+    console: "[DOWNLOAD] [PROD] %d{yyyy-MM-dd HH:mm:ss.SSS} [%5p] --- [%15.15t] %-40.40logger{1.} :: %m%n%wEx"
