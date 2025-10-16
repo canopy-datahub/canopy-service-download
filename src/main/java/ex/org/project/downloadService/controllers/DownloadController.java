@@ -19,13 +19,6 @@ public class DownloadController {
     private final RetrievalService retrievalService;
     private final UserAuthService authService;
 
-    @GetMapping("/submission")
-    public ResponseEntity<Object> downloadSubmission(@CookieValue(value="chocolateChip", required = false) String sessionId,
-                                                     @RequestParam Integer submissionId){
-        authService.checkAuth(sessionId, List.of(AccessRole.DATA_CURATOR));
-        return retrievalService.getSubmissionFiles(submissionId);
-    }
-
     @GetMapping("/study-documents")
     public ResponseEntity<Object> downloadStudyDocuments(@RequestParam Integer studyId) {
         return retrievalService.getStudyDocuments(studyId);
@@ -58,28 +51,10 @@ public class DownloadController {
         return retrievalService.getVariableReport();
     }
 
-    @GetMapping("/variables-page")
-    public ResponseEntity<Object> downloadVariablesPage(){
-        return retrievalService.getVariablesPage();
-    }
-
-    @GetMapping("/study/pdf")
-    public ResponseEntity<Object> getMtaForm(@RequestParam("studyId") Integer studyId, @RequestParam(value="sessionId", required = false) String sessionId) {
-        authService.checkAuth(sessionId, List.of(AccessRole.DATA_CURATOR, AccessRole.DATA_SUBMITTER));
-        return retrievalService.getStudyMtaForm(studyId);
-    }
-
     @GetMapping("/study-uuids")
     public ResponseEntity<Object> getUuidSpreadsheet(@RequestParam(value="sessionId", required = false) String sessionId){
         authService.checkAuth(sessionId, List.of(AccessRole.DATA_SUBMITTER));
         return retrievalService.getUuidSpreadsheet();
-    }
-
-    @GetMapping("/public-data")
-    public ResponseEntity<Object> getPublicData(@RequestParam(value="sessionId", required = false) String sessionId,
-                                                @RequestParam List<Integer> fileIds){
-        authService.checkAuth(sessionId);
-        return retrievalService.getPublicData(fileIds);
     }
 
     @GetMapping("/uploadPortal/file")

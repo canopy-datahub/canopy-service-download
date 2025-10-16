@@ -67,7 +67,7 @@ public class FileRetrievalService implements RetrievalService {
                 .map(DataFile::getS3FileId)
                 .filter(this::nullS3FileIdFilter)
                 .toList();
-        
+
         String zipName = "subm_" + submissionId;
 
         return downloadService.downloadFiles(s3FileIds, zipName);
@@ -192,7 +192,7 @@ public class FileRetrievalService implements RetrievalService {
                 .map(DataFile::getS3FileId)
                 .filter(this::nullS3FileIdFilter)
                 .toList();
-        
+
         ViewStudy study = viewStudyRepository.findByStudyId(studyId);
 		String phsNumber = study.getPhs();
 
@@ -209,10 +209,6 @@ public class FileRetrievalService implements RetrievalService {
 
     public ResponseEntity<Object> getVariableReport(){
         return downloadService.getVariableReportPage(variableReportFilePath, "Complete-Data-Variable-Report.xlsx");
-    }
-
-    public ResponseEntity<Object> getVariablesPage(){
-        return downloadService.getVariableReportPage(variablesPageFilePath, "Variables-Page.xlsx");
     }
 
     /**
@@ -256,34 +252,8 @@ public class FileRetrievalService implements RetrievalService {
         return downloadService.downloadFile(dataFile.getS3FileId());
     }
 
-    public ResponseEntity<Object> getStudyMtaForm(Integer studyId){
-        Study study = studyRepository.findById(studyId)
-                .orElseThrow(() -> new StudyNotFoundException(String.format("Study not found with ID %d", studyId)));
-        return downloadService.downloadFile(study.getFileName(), study.getFileUrl());
-    }
-
     public ResponseEntity<Object> getUuidSpreadsheet(){
         return downloadService.downloadFile( "RADx-Data-Hub_Study-IDs.xlsx", uuidSpreadsheetPath);
-    }
-
-    public ResponseEntity<Object> getPublicData(List<Integer> fileIds) {
-        List<PublicData> publicDataList = publicDataRepository.findAllById(fileIds);
-
-        if(publicDataList.isEmpty()){
-            String emptyListWarning = String.format("No files found for ids: %s", fileIds.toString());
-            log.warn(emptyListWarning);
-            throw new DataFileNotFoundException(emptyListWarning);
-        }
-        if(publicDataList.size() != fileIds.size()){
-            log.warn("1 or more Public Data files not found from provided IDs");
-        }
-
-        if(publicDataList.size() == 1) {
-            return downloadService.downloadFile(publicDataList.get(0).getS3FileId());
-        }
-
-        List<Integer> s3FileIds = publicDataList.stream().map(PublicData::getS3FileId).toList();
-        return downloadService.downloadFiles(s3FileIds, "public-data");
     }
 
     @Transactional
