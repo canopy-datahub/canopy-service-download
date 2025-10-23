@@ -1,11 +1,17 @@
 package ex.org.project.downloadService.controllers;
 
-import ex.org.project.downloadService.auth.AccessRole;
-import ex.org.project.downloadService.auth.UserAuthService;
+import ex.org.project.datahub.auth.core.FileAuthorizationService;
+import ex.org.project.datahub.auth.core.KeycloakAuthenticationService;
+import ex.org.project.datahub.auth.model.AccessRole;
 import ex.org.project.downloadService.services.RetrievalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,12 +23,13 @@ import java.util.Optional;
 public class DownloadController {
 
     private final RetrievalService retrievalService;
-    private final UserAuthService authService;
+    private final KeycloakAuthenticationService authenticationService;
+    private final FileAuthorizationService fileAuthorizationService;
 
     @GetMapping("/submission")
-    public ResponseEntity<Object> downloadSubmission(@CookieValue(value="chocolateChip", required = false) String sessionId,
+    public ResponseEntity<Object> downloadSubmission(@AuthenticationPrincipal Jwt jwt,
                                                      @RequestParam Integer submissionId){
-        authService.checkAuth(sessionId, List.of(AccessRole.DATA_CURATOR));
+        authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_CURATOR));
         return retrievalService.getSubmissionFiles(submissionId);
     }
 
@@ -32,10 +39,10 @@ public class DownloadController {
     }
 
     @GetMapping("/selected-files")
-    public ResponseEntity<Object> downloadSelectedFilesTemp(@RequestParam(value="sessionId", required = false) String sessionId,
+    public ResponseEntity<Object> downloadSelectedFilesTemp(@AuthenticationPrincipal Jwt jwt,
                                                             @RequestParam List<Integer> dataFiles,
                                                             @RequestParam List<Integer> sasFiles){
-        Integer userId = authService.checkAuth(sessionId);
+        Integer userId = authenticationService.checkAuth(jwt);
         return retrievalService.getSelectedFiles(dataFiles, sasFiles, userId);
     }
 
@@ -64,28 +71,28 @@ public class DownloadController {
     }
 
     @GetMapping("/study/pdf")
-    public ResponseEntity<Object> getMtaForm(@RequestParam("studyId") Integer studyId, @RequestParam(value="sessionId", required = false) String sessionId) {
-        authService.checkAuth(sessionId, List.of(AccessRole.DATA_CURATOR, AccessRole.DATA_SUBMITTER));
+    public ResponseEntity<Object> getMtaForm(@RequestParam("studyId") Integer studyId, @AuthenticationPrincipal Jwt jwt) {
+        authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_CURATOR, AccessRole.DATA_SUBMITTER));
         return retrievalService.getStudyMtaForm(studyId);
     }
 
     @GetMapping("/study-uuids")
-    public ResponseEntity<Object> getUuidSpreadsheet(@RequestParam(value="sessionId", required = false) String sessionId){
-        authService.checkAuth(sessionId, List.of(AccessRole.DATA_SUBMITTER));
+    public ResponseEntity<Object> getUuidSpreadsheet(@AuthenticationPrincipal Jwt jwt){
+        authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_SUBMITTER));
         return retrievalService.getUuidSpreadsheet();
     }
 
     @GetMapping("/public-data")
-    public ResponseEntity<Object> getPublicData(@RequestParam(value="sessionId", required = false) String sessionId,
+    public ResponseEntity<Object> getPublicData(@AuthenticationPrincipal Jwt jwt,
                                                 @RequestParam List<Integer> fileIds){
-        authService.checkAuth(sessionId);
+        Integer userId = authenticationService.checkAuth(jwt);
         return retrievalService.getPublicData(fileIds);
     }
 
     @GetMapping("/uploadPortal/file")
-    public ResponseEntity<Object> getUploadPortalFile(@RequestParam String sessionId,
+    public ResponseEntity<Object> getUploadPortalFile(@AuthenticationPrincipal Jwt jwt,
                                                       @RequestParam Integer uploadId){
-        Integer userId = authService.checkAuth(sessionId, List.of(AccessRole.DATA_CURATOR));
+        Integer userId = authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_CURATOR));
         return retrievalService.getUploadPortalFile(uploadId, userId);
     }
 

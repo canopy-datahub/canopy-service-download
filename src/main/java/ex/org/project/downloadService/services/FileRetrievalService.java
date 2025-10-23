@@ -1,21 +1,22 @@
 package ex.org.project.downloadService.services;
 
-import ex.org.project.downloadService.auth.UserAuthorizationException;
+import ex.org.project.datahub.auth.core.FileAuthorizationService;
+import ex.org.project.datahub.auth.exception.UserAuthorizationException;
 import ex.org.project.downloadService.entities.*;
 import ex.org.project.downloadService.exceptions.custom.*;
-import ex.org.project.downloadService.entities.PublicData;
 import ex.org.project.downloadService.models.ZipName;
 import ex.org.project.downloadService.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -67,7 +68,7 @@ public class FileRetrievalService implements RetrievalService {
                 .map(DataFile::getS3FileId)
                 .filter(this::nullS3FileIdFilter)
                 .toList();
-        
+
         String zipName = "subm_" + submissionId;
 
         return downloadService.downloadFiles(s3FileIds, zipName);
@@ -122,7 +123,7 @@ public class FileRetrievalService implements RetrievalService {
         if(dataFileIds.isEmpty()){
             return new ArrayList<>(0);
         }
-        fileAuthorizationService.checkDataFileAuthorization(dataFileIds, userId);
+        fileAuthorizationService.checkFileAuthorization(userId, dataFileIds);
         List<DataFile> dataFiles = dataFileRepository.findByIdIn(dataFileIds);
         setZipNameFromDataFile(zipName, dataFiles);
         downloadHistoryService.trackDataFileDownloads(dataFiles, userId);
@@ -145,7 +146,11 @@ public class FileRetrievalService implements RetrievalService {
             return new ArrayList<>(0);
         }
         List<SasDataFile> sasDataFiles = sasDataFileRepository.findAllById(sasFileIds);
-        fileAuthorizationService.checkSasFileAuthorization(sasDataFiles, userId);
+        // Check authorization for parent data files of SAS files
+        Set<Integer> parentIds = sasDataFiles.stream()
+                .map(SasDataFile::getParentDataFileId)
+                .collect(Collectors.toSet());
+        fileAuthorizationService.checkFileAuthorization(userId, new ArrayList<>(parentIds));
         if(zipName.getName() == null) {
             setZipNameFromSasFiles(zipName, sasDataFiles);
         }
@@ -192,7 +197,7 @@ public class FileRetrievalService implements RetrievalService {
                 .map(DataFile::getS3FileId)
                 .filter(this::nullS3FileIdFilter)
                 .toList();
-        
+
         ViewStudy study = viewStudyRepository.findByStudyId(studyId);
 		String phsNumber = study.getPhs();
 

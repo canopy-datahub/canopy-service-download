@@ -2,10 +2,10 @@ package ex.org.project.downloadService.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import ex.org.project.downloadService.entities.S3File;
 import ex.org.project.downloadService.exceptions.custom.DownloadServiceReadWriteError;
 import ex.org.project.downloadService.exceptions.custom.DownloadServiceS3FileError;
 import ex.org.project.downloadService.models.Download;
-import ex.org.project.downloadService.entities.S3File;
 import ex.org.project.downloadService.models.ZipInfo;
 import ex.org.project.downloadService.repositories.S3FileRepository;
 import lombok.extern.slf4j.Slf4j;

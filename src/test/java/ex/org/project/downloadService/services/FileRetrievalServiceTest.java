@@ -1,6 +1,7 @@
 package ex.org.project.downloadService.services;
 
-import ex.org.project.downloadService.auth.UserAuthorizationException;
+import ex.org.project.datahub.auth.core.FileAuthorizationService;
+import ex.org.project.datahub.auth.exception.UserAuthorizationException;
 import ex.org.project.downloadService.entities.*;
 import ex.org.project.downloadService.exceptions.custom.DataFileNotFoundException;
 import ex.org.project.downloadService.exceptions.custom.DocumentFileNotFoundException;
@@ -8,15 +9,22 @@ import ex.org.project.downloadService.exceptions.custom.SubmissionNotFoundExcept
 import ex.org.project.downloadService.repositories.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;

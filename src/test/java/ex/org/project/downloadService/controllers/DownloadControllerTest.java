@@ -1,6 +1,7 @@
 package ex.org.project.downloadService.controllers;
 
-import ex.org.project.downloadService.auth.UserAuthService;
+import ex.org.project.datahub.auth.core.FileAuthorizationService;
+import ex.org.project.datahub.auth.core.KeycloakAuthenticationService;
 import ex.org.project.downloadService.services.RetrievalService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,9 @@ class DownloadControllerTest {
     @MockBean
     private RetrievalService retrievalService;
     @MockBean
-    private UserAuthService authService;
+    private KeycloakAuthenticationService authenticationService;
+    @MockBean
+    private FileAuthorizationService fileAuthorizationService;
 
     @Test
     void downloadSubmission() throws Exception{
