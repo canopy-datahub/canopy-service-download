@@ -65,28 +65,11 @@ public class DownloadController {
         return retrievalService.getVariableReport();
     }
 
-    @GetMapping("/variables-page")
-    public ResponseEntity<Object> downloadVariablesPage(){
-        return retrievalService.getVariablesPage();
-    }
-
-    @GetMapping("/study/pdf")
-    public ResponseEntity<Object> getMtaForm(@RequestParam("studyId") Integer studyId, @AuthenticationPrincipal Jwt jwt) {
-        authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_CURATOR, AccessRole.DATA_SUBMITTER));
-        return retrievalService.getStudyMtaForm(studyId);
-    }
-
     @GetMapping("/study-uuids")
     public ResponseEntity<Object> getUuidSpreadsheet(@AuthenticationPrincipal Jwt jwt){
+        Integer userId = authenticationService.checkAuth(jwt);
         authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_SUBMITTER));
         return retrievalService.getUuidSpreadsheet();
-    }
-
-    @GetMapping("/public-data")
-    public ResponseEntity<Object> getPublicData(@AuthenticationPrincipal Jwt jwt,
-                                                @RequestParam List<Integer> fileIds){
-        Integer userId = authenticationService.checkAuth(jwt);
-        return retrievalService.getPublicData(fileIds);
     }
 
     @GetMapping("/uploadPortal/file")

@@ -18,13 +18,7 @@ public interface RetrievalService {
 
     ResponseEntity<Object> getVariableReport();
 
-    ResponseEntity<Object> getVariablesPage();
-
-    ResponseEntity<Object> getStudyMtaForm(Integer studyId);
-
     ResponseEntity<Object> getUuidSpreadsheet();
-
-    ResponseEntity<Object> getPublicData(List<Integer> fileIds);
 
     ResponseEntity<Object> getUploadPortalFile(Integer uploadId, Integer userId);
 }
