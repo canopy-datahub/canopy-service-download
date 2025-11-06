@@ -32,12 +32,12 @@ public class DownloadController {
         return retrievalService.getSelectedFiles(dataFiles, sasFiles, userId);
     }
 
-    @GetMapping("/meta-dict")
+    @GetMapping("/datafile")
     public ResponseEntity<Object> downloadDataFile(@RequestParam Integer fileId, @RequestParam Optional<Boolean> yaml){
         if(yaml.isPresent()){
-            return retrievalService.getMetaOrDictFile(fileId,yaml.get());
+            return retrievalService.getDatafile(fileId,yaml.get());
         }else{
-            return retrievalService.getMetaOrDictFile(fileId,false);
+            return retrievalService.getDatafile(fileId,false);
         }
     }
 

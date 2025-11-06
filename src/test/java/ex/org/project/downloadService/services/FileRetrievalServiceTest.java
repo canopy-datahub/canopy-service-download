@@ -294,7 +294,7 @@ class FileRetrievalServiceTest {
     }
 
     @Test
-    void getMetaOrDictFile_HappyPath() {
+    void getDatafile_HappyPath() {
         DataFile dataFile = new DataFile();
         LkupDataFileCategory category = new LkupDataFileCategory(6, "File Metadata - Original", "metadata");
         dataFile.setId(1);
@@ -308,20 +308,20 @@ class FileRetrievalServiceTest {
         when(downloadService.downloadFile(10))
                 .thenReturn(ResponseEntity.ok("octet stream of zip file".getBytes()));
 
-        ResponseEntity<Object> response = retrievalService.getMetaOrDictFile(1,false);
+        ResponseEntity<Object> response = retrievalService.getDatafile(1,false);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    void getMetaOrDictFile_DataFileNotFound() {
+    void getFile_DataDatafileNotFound() {
         when(dataFileRepository.findById(1))
                 .thenReturn(Optional.empty());
 
-        assertThrows(DataFileNotFoundException.class, () -> retrievalService.getMetaOrDictFile(1,false));
+        assertThrows(DataFileNotFoundException.class, () -> retrievalService.getDatafile(1,false));
     }
 
     @Test
-    void getMetaOrDictFile_TriedToAccessDataFile() {
+    void getFile_TriedToAccessDataDatafile() {
         DataFile dataFile = new DataFile();
         LkupDataFileCategory category = new LkupDataFileCategory(2, "Tabular Data - Original", "data");
         dataFile.setId(1);
@@ -333,11 +333,11 @@ class FileRetrievalServiceTest {
         when(fileCategoryRepository.findById(2))
                 .thenReturn(Optional.of(category));
 
-        assertThrows(UserAuthorizationException.class, () -> retrievalService.getMetaOrDictFile(1,false));
+        assertThrows(UserAuthorizationException.class, () -> retrievalService.getDatafile(1,false));
     }
 
     @Test
-    void getMetaOrDictFile_InvalidCategory() {
+    void getDatafile_InvalidCategory() {
         DataFile dataFile = new DataFile();
         LkupDataFileCategory category = new LkupDataFileCategory(22, "Test", "test");
         dataFile.setId(1);
@@ -349,11 +349,11 @@ class FileRetrievalServiceTest {
         when(fileCategoryRepository.findById(22))
                 .thenReturn(Optional.of(category));
 
-        assertThrows(DataFileNotFoundException.class, () -> retrievalService.getMetaOrDictFile(1,false));
+        assertThrows(DataFileNotFoundException.class, () -> retrievalService.getDatafile(1,false));
     }
 
     @Test
-    void getMetaOrDictFile_UncategorizedDataFile() {
+    void getFile_UncategorizedDataDatafile() {
         DataFile dataFile = new DataFile();
         LkupDataFileCategory category = new LkupDataFileCategory(10, "Uncategorized", "other");
         dataFile.setId(1);
@@ -365,7 +365,7 @@ class FileRetrievalServiceTest {
         when(fileCategoryRepository.findById(10))
                 .thenReturn(Optional.of(category));
 
-        assertThrows(UserAuthorizationException.class, () -> retrievalService.getMetaOrDictFile(1 ,false));
+        assertThrows(UserAuthorizationException.class, () -> retrievalService.getDatafile(1 ,false));
     }
 
 }
