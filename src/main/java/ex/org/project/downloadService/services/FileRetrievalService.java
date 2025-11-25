@@ -221,7 +221,7 @@ public class FileRetrievalService implements RetrievalService {
      * @param fileId data file id
      * @return ResponseEntity containing file
      */
-    public ResponseEntity<Object> getMetaOrDictFile(Integer fileId, Boolean downloadYaml){
+    public ResponseEntity<Object> getDatafile(Integer fileId, Boolean downloadYaml){
         Optional<DataFile> dataFileOptional = dataFileRepository
                 .findById(fileId);
         if(dataFileOptional.isEmpty()){
@@ -238,7 +238,8 @@ public class FileRetrievalService implements RetrievalService {
         }
         switch (fileCategoryOpt.get().getCategoryGroup()){
             case "data":
-                throw new UserAuthorizationException("Please log in to access study data.");
+//                throw new UserAuthorizationException("Please log in to access study data.");
+              break;
             case "other":
                 log.warn(String.format("Data file ID { %d } needs to be properly categorized", fileId));
                 throw new UserAuthorizationException("Please log in to access uncategorized data.");

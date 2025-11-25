@@ -14,7 +14,7 @@ public interface RetrievalService {
 
     ResponseEntity<Object> getSelectedFiles(List<Integer> dataFiles, List<Integer> sasFiles, Integer userId);
 
-    ResponseEntity<Object> getMetaOrDictFile(Integer fileId, Boolean downloadYaml);
+    ResponseEntity<Object> getDatafile(Integer fileId, Boolean downloadYaml);
 
     ResponseEntity<Object> getVariableReport();
 
