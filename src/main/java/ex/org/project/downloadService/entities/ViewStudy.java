@@ -20,9 +20,6 @@ public class ViewStudy {
 	@Column(name = "study_id")
 	private Integer studyId;
 
-	@Column(name = "phs")
-	private String phs;
-
 	@Column(name = "title")
 	private String studyName;
 
@@ -32,7 +29,7 @@ public class ViewStudy {
 	@Column(name = "created_at")
 	private Timestamp createdAt;
 
-	@Column(name = "dcc")
-	private String dcc;
+	@Column(name = "center")
+	private String center;
 
 }

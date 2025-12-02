@@ -137,7 +137,8 @@ public class FileRetrievalService implements RetrievalService {
         }
         Integer studyId = dataFiles.get(0).getDataSubmission().getStudyId();
         ViewStudy study = viewStudyRepository.findByStudyId(studyId);
-        zipName.setName(study.getPhs());
+        String zipFileName = String.format("%s_%s.zip", studyId, study.getStudyName());
+        zipName.setName(zipFileName);
     }
 
     private List<Integer> getSasFileS3FileIds(List<Integer> sasFileIds, Integer userId, ZipName zipName) {
@@ -194,9 +195,8 @@ public class FileRetrievalService implements RetrievalService {
                 .toList();
 
         ViewStudy study = viewStudyRepository.findByStudyId(studyId);
-		String phsNumber = study.getPhs();
 
-        return downloadService.downloadFiles(s3FileIds, phsNumber);
+        return downloadService.downloadFiles(s3FileIds, String.valueOf(studyId));
     }
 
     private boolean nullS3FileIdFilter(Integer s3FileId){
