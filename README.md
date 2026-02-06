@@ -15,10 +15,6 @@ There are a few environment variable that need to be set:
     * database password for db_username
 * spring_profiles_active
     * This should be set to 'local'
-* VariablesPagePath
-  * s3 path pointing to the Variables Page Excel spreadsheet
-* VariablesReportPath
-  * s3 path pointing to the Variables Report Excel spreadsheet
 * UuidSpreadsheetPath
   * s3 path pointing  to the spreadsheet mapping study UUID's to their study
 
@@ -48,10 +44,6 @@ There are a few environment variable that need to be set in AWS Secrets Manager:
     * database port
 * dbname
     * database name
-* VariablesPagePath
-    * s3 path pointing to the Variables Page Excel spreadsheet
-* VariablesReportPath
-    * s3 path pointing to the Variables Report Excel spreadsheet
 * UuidSpreadsheetPath
   * s3 path pointing  to the spreadsheet mapping study UUID's to their study
 

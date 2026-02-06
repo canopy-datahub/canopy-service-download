@@ -25,8 +25,6 @@ logging:
 
 s3:
   download-directory: "workingDirectory/"
-  variables-page-file-path: ${VariablesPagePath}
-  variable-report-file-path: ${VariablesReportPath}
   study-uuid-spreadsheet-path: ${UuidSpreadsheetPath}
 
 management:
