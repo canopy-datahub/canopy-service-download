@@ -29,9 +29,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -283,53 +280,6 @@ public class AwsDownloadService implements DownloadService {
         }
     }
 
-    /**
-     * Method used to retrieve and return the Variable Report and Variable Page excel documents stored on the AWS S3.
-     * Given the path in the S3 for the files, it will return them. Before returning to the client, the last
-     * modified date field is appended to the front of the file name in MM-DD-YYYY format.
-     */
-    public ResponseEntity<Object> getVariableReportPage(String path, String fileName){
-        S3File s3File = new S3File();
-        s3File.setFilePath(path);
-        s3File.setS3FileKeyAndBucketFromPath();
-        s3File.setFileName(fileName);
-
-        //create local file to store data coming from s3 and start download
-        File tempFile = new File(workingDirectory + s3File.getFileName());
-
-        DownloadFileRequest downloadFileRequest =
-                DownloadFileRequest.builder()
-                        .getObjectRequest(b -> b.bucket(s3File.getFileBucket()).key(s3File.getFileKey()))
-                        .destination(Paths.get(tempFile.getPath()))
-                        .build();
-        FileDownload downloadFile = transferManager.downloadFile(downloadFileRequest);
-
-        //Prep the file name using the last modified date of the file downloaded.
-        Instant lastModified = downloadFile.completionFuture().join().response().lastModified();
-        String clientFileName = DateTimeFormatter.ofPattern("MM-dd-yyyy")
-                .withZone(ZoneOffset.UTC)
-                .format(lastModified) +
-                s3File.getFileName();
-
-        //write file into memory, create response, clean up local filesystem
-        try {
-            FileInputStream fileStream = new FileInputStream(tempFile);
-            byte[] responseFile = fileStream.readAllBytes();
-            fileStream.close();
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + clientFileName);
-            ResponseEntity<Object> response = ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(responseFile);
-            tempFile.delete();
-            return response;
-        } catch (IOException e){
-            log.error("Error writing file to Response Entity", e);
-            tempFile.delete();
-            throw new DownloadServiceReadWriteError("Error reading file");
-        }
-    }
 
     public ResponseEntity<Object> initiateYamlDownload(Integer s3FileId){
         //check if the metadata file s3 file exists

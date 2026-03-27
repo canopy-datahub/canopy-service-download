@@ -48,11 +48,6 @@ public class DownloadController {
         return retrievalService.getDocumentFile(fileId, studyId);
     }
 
-    @GetMapping("/variable-report")
-    public ResponseEntity<Object> downloadVariableReport(){
-        return retrievalService.getVariableReport();
-    }
-
     @GetMapping("/study-uuids")
     public ResponseEntity<Object> getUuidSpreadsheet(@AuthenticationPrincipal Jwt jwt){
         authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_SUBMITTER));

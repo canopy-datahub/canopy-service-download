@@ -34,10 +34,6 @@ public class FileRetrievalService implements RetrievalService {
     private final DownloadHistoryService downloadHistoryService;
     private final FileAuthorizationService fileAuthorizationService;
     private final UserFileUploadRepository userFileUploadRepository;
-    @Value("${s3.variables-page-file-path}")
-    private String variablesPageFilePath;
-    @Value("${s3.variable-report-file-path}")
-    private String variableReportFilePath;
     @Value("${s3.study-uuid-spreadsheet-path}")
     private String uuidSpreadsheetPath;
 
@@ -205,10 +201,6 @@ public class FileRetrievalService implements RetrievalService {
             return false;
         }
         return true;
-    }
-
-    public ResponseEntity<Object> getVariableReport(){
-        return downloadService.getVariableReportPage(variableReportFilePath, "Complete-Data-Variable-Report.xlsx");
     }
 
     /**

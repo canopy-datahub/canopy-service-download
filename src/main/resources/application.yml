@@ -16,7 +16,7 @@ spring:
           issuer-uri: ${DATAHUB_KEYCLOAK_ISSUER_URI}
           jwk-set-uri: ${DATAHUB_KEYCLOAK_JWK_SET_URI}
 server:
-  port: 8086
+  port: 8080
 
 logging:
   level:
@@ -34,8 +34,6 @@ keycloak:
 
 s3:
   download-directory: "workingDirectory/"
-  variables-page-file-path: ${VariablesPagePath}
-  variable-report-file-path: ${VariablesReportPath}
   study-uuid-spreadsheet-path: ${UuidSpreadsheetPath}
 
 management:
@@ -50,13 +48,6 @@ management:
     web:
       exposure:
         include: health,shutdown
-
-# RAS configuration
-# ras:
-#  url: ${rasurl}
-#  client:
-#    id: ${rasclientid}
-#    secret: ${rasclientsecret}
 
 ---
 # LOCAL
@@ -88,7 +79,7 @@ spring:
   jpa:
     show-sql: true
   config:
-#    import: aws-secretsmanager:application_dev
+    import: aws-secretsmanager:${AWS_SECRET_NAME}
     activate:
       on-profile: dev
   security:
@@ -110,7 +101,7 @@ logging:
 
 spring:
   config:
-    import: aws-secretsmanager:application_test
+    import: aws-secretsmanager:${AWS_SECRET_NAME}
     activate:
       on-profile: test
 
@@ -123,7 +114,7 @@ logging:
 
 spring:
   config:
-    import: aws-secretsmanager:application_prod
+    import: aws-secretsmanager:${AWS_SECRET_NAME}
     activate:
       on-profile: prod
 
