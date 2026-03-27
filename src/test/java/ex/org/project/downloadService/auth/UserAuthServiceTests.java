@@ -13,7 +13,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import ex.org.project.downloadService.auth.core.KeycloakAuthenticationService;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 @ExtendWith(MockitoExtension.class)
 class UserAuthServiceTests {
@@ -32,15 +36,14 @@ class UserAuthServiceTests {
 
     private final AuthUserMapper authUserMapper = new AuthUserMapperImpl();
 
-    private UserAuthService userAuthService;
+    private KeycloakAuthenticationService authenticationService;
 
-    @Mock
-    private AuthRasService authRasService;
+    private UserAuthService userAuthService;
 
     @BeforeEach
     public void setup() {
         userAuthService = new UserAuthService(authUserMapper, authRasTrackingRepository, authUserRepository,
-                authUserRasRepository, authUtilRepository, authRasService);
+                authUserRasRepository, authUtilRepository);
     }
 
     @Test
@@ -53,13 +56,14 @@ class UserAuthServiceTests {
         authUser.setRoles(List.of(authRole));
         authUser.setStatus(status);
         authUser.setId(8);
+        Jwt jwt = mock(Jwt.class);
 
         when(authRasTrackingRepository.findBySessionId(anyString()))
                 .thenReturn(Optional.of(rasTracking));
         when(authUserRepository.findByEmail("test@bah.com"))
                 .thenReturn(Optional.of(authUser));
 
-        Integer response = userAuthService.checkAuth("123", List.of(AccessRole.ADMIN));
+        Integer response = authenticationService.checkAuth(jwt, List.of(AccessRole.ADMIN));
 
         assertEquals(8, response);
 
@@ -74,39 +78,43 @@ class UserAuthServiceTests {
         authUser.setStatus(status);
         authUser.setRoles(new ArrayList<>());
         authUser.setId(8);
+        Jwt jwt = mock(Jwt.class);
 
         when(authRasTrackingRepository.findBySessionId(anyString()))
                 .thenReturn(Optional.of(rasTracking));
         when(authUserRepository.findByEmail("test@bah.com"))
                 .thenReturn(Optional.of(authUser));
 
-        Integer response = userAuthService.checkAuth("123", List.of());
+        Integer response = authenticationService.checkAuth(jwt, List.of());
 
         assertEquals(8, response);
     }
 
     @Test
     void testCheckAuth_roles_invalidSessionId(){
+        Jwt jwt = mock(Jwt.class);
         when(authRasTrackingRepository.findBySessionId(anyString()))
                 .thenReturn(Optional.empty());
 
         assertThrows(UserAuthenticationException.class,
-                () -> userAuthService.checkAuth("123", List.of(AccessRole.ADMIN)));
+                () -> authenticationService.checkAuth(jwt, List.of(AccessRole.ADMIN)));
     }
 
     @Test
     void testCheckAuth_roles_emailNotFound(){
+        Jwt jwt = mock(Jwt.class);
         when(authRasTrackingRepository.findBySessionId(anyString()))
                 .thenReturn(Optional.of(new AuthRasTracking()));
 
         assertThrows(UserNotFoundException.class,
-                () -> userAuthService.checkAuth("123", List.of(AccessRole.ADMIN)));
+                () -> authenticationService.checkAuth(jwt, List.of(AccessRole.ADMIN)));
     }
 
     @Test
     void testCheckAuth_roles_userNotFound(){
         AuthRasTracking rasTracking = new AuthRasTracking();
         rasTracking.setEmail("test@bah.com");
+        Jwt jwt = mock(Jwt.class);
 
         when(authRasTrackingRepository.findBySessionId(anyString()))
                 .thenReturn(Optional.of(rasTracking));
@@ -114,7 +122,7 @@ class UserAuthServiceTests {
                 .thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class,
-                () -> userAuthService.checkAuth("123", List.of(AccessRole.ADMIN)));
+                () -> authenticationService.checkAuth(jwt, List.of(AccessRole.ADMIN)));
     }
 
     @Test
@@ -127,6 +135,7 @@ class UserAuthServiceTests {
         authUser.setRoles(List.of(authRole));
         authUser.setStatus(status);
         authUser.setId(8);
+        Jwt jwt = mock(Jwt.class);
 
         when(authRasTrackingRepository.findBySessionId(anyString()))
                 .thenReturn(Optional.of(rasTracking));
@@ -134,7 +143,7 @@ class UserAuthServiceTests {
                 .thenReturn(Optional.of(authUser));
 
         assertThrows(UserAuthorizationException.class,
-                () -> userAuthService.checkAuth("123", List.of(AccessRole.ADMIN)));
+                () -> authenticationService.checkAuth(jwt, List.of(AccessRole.ADMIN)));
     }
 
     @Test
@@ -147,13 +156,14 @@ class UserAuthServiceTests {
         authUser.setRoles(List.of(authRole));
         authUser.setStatus(status);
         authUser.setId(8);
+        Jwt jwt = mock(Jwt.class);
 
         when(authRasTrackingRepository.findBySessionId(anyString()))
                 .thenReturn(Optional.of(rasTracking));
         when(authUserRepository.findByEmail("test@bah.com"))
                 .thenReturn(Optional.of(authUser));
 
-        Integer response = userAuthService.checkAuth("123");
+        Integer response = authenticationService.checkAuth(jwt);
 
         assertEquals(8, response);
 

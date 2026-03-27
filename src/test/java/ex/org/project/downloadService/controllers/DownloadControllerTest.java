@@ -36,7 +36,8 @@ class DownloadControllerTest {
         this.mockMvc.perform(
                 get("/download/submission")
                         .queryParam("submissionId", submissionId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isOk());
     }
 
@@ -57,7 +58,8 @@ class DownloadControllerTest {
         this.mockMvc.perform(
                 get("/download/study-documents")
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isOk());
     }
 
@@ -67,7 +69,8 @@ class DownloadControllerTest {
         this.mockMvc.perform(
                 get("/download/study-documents")
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isBadRequest());
     }
 
@@ -82,7 +85,8 @@ class DownloadControllerTest {
                 get("/download/document")
                         .queryParam("fileId", fileId)
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isOk());
     }
 
@@ -94,7 +98,8 @@ class DownloadControllerTest {
                 get("/download/document")
                         .queryParam("fileId", fileId)
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isBadRequest());
     }
 
@@ -106,7 +111,8 @@ class DownloadControllerTest {
                 get("/download/document")
                         .queryParam("fileId", fileId)
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isBadRequest());
     }
 

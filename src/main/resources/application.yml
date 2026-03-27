@@ -9,7 +9,12 @@ spring:
     hibernate.ddl-auto: none
     show-sql: false
     open-in-view: false
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${DATAHUB_KEYCLOAK_ISSUER_URI}
+          jwk-set-uri: ${DATAHUB_KEYCLOAK_JWK_SET_URI}
 server:
   port: 8080
 
@@ -22,6 +27,10 @@ logging:
       DispatcherServlet: trace
       mvc.method.annotation:
         HttpEntityMethodProcessor: info
+
+keycloak:
+  realm: ${DATAHUB_KEYCLOAK_REALM}
+  resource: ${DATAHUB_KEYCLOAK_CLIENT_ID}
 
 s3:
   download-directory: "workingDirectory/"
@@ -39,13 +48,6 @@ management:
     web:
       exposure:
         include: health,shutdown
-
-# RAS configuration
-ras:
-  url: ${rasurl}
-  client:
-    id: ${rasclientid}
-    secret: ${rasclientsecret}
 
 ---
 # LOCAL
