@@ -1,6 +1,8 @@
 # Download Service
 
-Spring Boot 3.1 microservice for Data Hub 3.0. It is running on Java 17.
+Spring Boot 3.1 microservice for Canopy. It is running on Java 17.
+
+Handles controlled dataset file downloads for authenticated and authorized users.
 
 # Install and Run
 
@@ -8,7 +10,7 @@ Spring Boot 3.1 microservice for Data Hub 3.0. It is running on Java 17.
 
 ### Local
 
-There are a few environment variable that need to be set:
+There are a few environment variables that need to be set:
 * db_username
     * database user that you're connecting through
 * db_password
@@ -16,7 +18,7 @@ There are a few environment variable that need to be set:
 * spring_profiles_active
     * This should be set to 'local'
 * UuidSpreadsheetPath
-  * s3 path pointing  to the spreadsheet mapping study UUID's to their study
+  * S3 path pointing to the spreadsheet mapping study UUIDs to their study
 
 I typically just set these via Java environment variables in IntelliJ.
 
@@ -33,7 +35,7 @@ mvn spring-boot:run
 
 If running a cloud configuration locally, AWS CLI needs to be installed and configured.
 
-There are a few environment variable that need to be set in AWS Secrets Manager:
+There are a few environment variables that need to be set in AWS Secrets Manager:
 * dbuser
     * database user that you're connecting through
 * password
@@ -45,7 +47,7 @@ There are a few environment variable that need to be set in AWS Secrets Manager:
 * dbname
     * database name
 * UuidSpreadsheetPath
-  * s3 path pointing  to the spreadsheet mapping study UUID's to their study
+  * S3 path pointing to the spreadsheet mapping study UUIDs to their study
 
 In a specific instance, the only environment variable that needs to be set is:
 * spring_profiles_active
