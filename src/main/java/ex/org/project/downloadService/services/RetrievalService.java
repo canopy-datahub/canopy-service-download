@@ -16,8 +16,6 @@ public interface RetrievalService {
 
     ResponseEntity<Object> getDatafile(Integer fileId, Boolean downloadYaml);
 
-    ResponseEntity<Object> getVariableReport();
-
     ResponseEntity<Object> getUuidSpreadsheet();
 
     ResponseEntity<Object> getUploadPortalFile(Integer uploadId, Integer userId);

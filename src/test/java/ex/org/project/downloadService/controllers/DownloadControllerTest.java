@@ -1,7 +1,6 @@
 package ex.org.project.downloadService.controllers;
 
-import ex.org.project.datahub.auth.core.FileAuthorizationService;
-import ex.org.project.datahub.auth.core.KeycloakAuthenticationService;
+import ex.org.project.downloadService.auth.UserAuthService;
 import ex.org.project.downloadService.services.RetrievalService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -26,9 +25,7 @@ class DownloadControllerTest {
     @MockBean
     private RetrievalService retrievalService;
     @MockBean
-    private KeycloakAuthenticationService authenticationService;
-    @MockBean
-    private FileAuthorizationService fileAuthorizationService;
+    private UserAuthService authService;
 
     @Test
     void downloadSubmission() throws Exception{
@@ -39,7 +36,8 @@ class DownloadControllerTest {
         this.mockMvc.perform(
                 get("/download/submission")
                         .queryParam("submissionId", submissionId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isOk());
     }
 
@@ -60,7 +58,8 @@ class DownloadControllerTest {
         this.mockMvc.perform(
                 get("/download/study-documents")
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isOk());
     }
 
@@ -70,7 +69,8 @@ class DownloadControllerTest {
         this.mockMvc.perform(
                 get("/download/study-documents")
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isBadRequest());
     }
 
@@ -85,7 +85,8 @@ class DownloadControllerTest {
                 get("/download/document")
                         .queryParam("fileId", fileId)
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isOk());
     }
 
@@ -97,7 +98,8 @@ class DownloadControllerTest {
                 get("/download/document")
                         .queryParam("fileId", fileId)
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isBadRequest());
     }
 
@@ -109,7 +111,8 @@ class DownloadControllerTest {
                 get("/download/document")
                         .queryParam("fileId", fileId)
                         .queryParam("studyId", studyId)
-                        .cookie(new Cookie("chocolateChip", "session123"))
+                        // TODO: Add authentication
+                        // .cookie(new Cookie("chocolateChip", "session123"))
         ).andExpect(status().isBadRequest());
     }
 

@@ -3,7 +3,6 @@ package ex.org.project.downloadService.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.sql.Timestamp;
 
 @Data

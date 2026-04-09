@@ -45,12 +45,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-client</artifactId>
     </dependency>
-    <!-- DataHub Keycloak Authentication Library -->
-    <dependency>
-      <groupId>ex.org.project</groupId>
-      <artifactId>datahub-lib-keycloak-auth</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>

@@ -1,7 +1,6 @@
 package ex.org.project.downloadService.services;
 
-import ex.org.project.datahub.auth.core.FileAuthorizationService;
-import ex.org.project.datahub.auth.exception.UserAuthorizationException;
+import ex.org.project.downloadService.auth.UserAuthorizationException;
 import ex.org.project.downloadService.entities.*;
 import ex.org.project.downloadService.exceptions.custom.DataFileNotFoundException;
 import ex.org.project.downloadService.exceptions.custom.DocumentFileNotFoundException;
@@ -9,22 +8,15 @@ import ex.org.project.downloadService.exceptions.custom.SubmissionNotFoundExcept
 import ex.org.project.downloadService.repositories.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
@@ -145,7 +137,6 @@ class FileRetrievalServiceTest {
 
         ViewStudy study = new ViewStudy();
         study.setStudyId(3);
-        study.setPhs("phs12345");
         when(viewStudyRepository.findByStudyId(3)).thenReturn(study);
 
         ResponseEntity<?> response = retrievalService.getStudyDocuments(3);
@@ -182,7 +173,6 @@ class FileRetrievalServiceTest {
 
         ViewStudy study1 = new ViewStudy();
         study1.setStudyId(1);
-        study1.setPhs("test123");
 
         Integer userId = 1;
 
@@ -192,13 +182,13 @@ class FileRetrievalServiceTest {
                 .thenReturn(study1);
         when(sasDataFileRepository.findAllById(anyList()))
                 .thenReturn(List.of(dataFile1));
-        when(downloadService.downloadFiles(argThat(arg -> arg.containsAll(List.of(3, 4))), eq(study1.getPhs()))).thenReturn(
+        when(downloadService.downloadFiles(argThat(arg -> arg.containsAll(List.of(3, 4))), eq(getZipFileName(study1)))).thenReturn(
                 ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body("octet stream of zip file")
         );
 
         ResponseEntity<?> response = retrievalService.getSelectedFiles(dataFileIds, sasFileIds, userId);
 
-        verify(downloadService).downloadFiles(anyList(), eq(study1.getPhs()));
+        verify(downloadService).downloadFiles(anyList(), eq(getZipFileName(study1)));
         verify(downloadHistoryService, times(1)).trackDataFileDownloads(anyList(), eq(userId));
         verify(downloadHistoryService, times(1)).trackSasFileDownloads(anyList(), eq(userId));
         verify(dataFileRepository, times(0)).findById(10);
@@ -243,7 +233,6 @@ class FileRetrievalServiceTest {
 
         ViewStudy study1 = new ViewStudy();
         study1.setStudyId(1);
-        study1.setPhs("test123");
 
         Integer userId = 1;
 
@@ -255,13 +244,13 @@ class FileRetrievalServiceTest {
                 .thenReturn(Optional.of(parentFile));
         when(viewStudyRepository.findByStudyId(1))
                 .thenReturn(study1);
-        when(downloadService.downloadFiles(argThat(arg -> arg.containsAll(List.of(3, 4))), eq(study1.getPhs()))).thenReturn(
+        when(downloadService.downloadFiles(argThat(arg -> arg.containsAll(List.of(3, 4))), eq(getZipFileName(study1)))).thenReturn(
                 ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body("octet stream of zip file")
                                                                                                                            );
 
         ResponseEntity<?> response = retrievalService.getSelectedFiles(dataFileIds, sasFileIds, userId);
 
-        verify(downloadService).downloadFiles(anyList(), eq(study1.getPhs()));
+        verify(downloadService).downloadFiles(anyList(), eq(getZipFileName(study1)));
         verify(dataFileRepository, times(0)).findByIdIn(anyList());
         verify(dataFileRepository, times(1)).findById(10);
         verify(downloadHistoryService, times(1)).trackSasFileDownloads(anyList(), eq(userId));
@@ -374,6 +363,10 @@ class FileRetrievalServiceTest {
                 .thenReturn(Optional.of(category));
 
         assertThrows(UserAuthorizationException.class, () -> retrievalService.getDatafile(1 ,false));
+    }
+
+    private String getZipFileName(ViewStudy study){
+      return String.format("%s_%s.zip", String.valueOf(study.getStudyId()), study.getStudyName());
     }
 
 }

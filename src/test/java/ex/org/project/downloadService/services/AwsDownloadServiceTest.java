@@ -29,30 +29,4 @@ public class AwsDownloadServiceTest {
 
     private final AwsDownloadService downloadService = new AwsDownloadService(transferManager, null, "src/test/resources/",null);
 
-
-    @Test
-    void testGetVariableReportPage() throws IOException {
-        Instant i = Instant.parse("2023-12-15T00:00:00.00Z");
-        CompletableFuture<CompletedFileDownload> future = CompletableFuture.supplyAsync(() -> {
-            return CompletedFileDownload.builder().response(GetObjectResponse.builder().lastModified(i).build()).build();
-        });
-
-        FileDownload fileDownload = mock(FileDownload.class);
-        when(transferManager.downloadFile(any(DownloadFileRequest.class))).thenReturn(fileDownload);
-        when(fileDownload.completionFuture()).thenReturn(future);
-
-        File tempFile = new File("src/test/resources/filename.txt");
-        try {
-            tempFile.createNewFile();
-
-            ResponseEntity<Object> response = downloadService.getVariableReportPage("src/test/resources/filename.txt", "filename.txt");
-
-            Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-            HttpHeaders headers = response.getHeaders();
-            Assertions.assertEquals("[attachment; filename=12-15-2023filename.txt]",
-                    headers.get(HttpHeaders.CONTENT_DISPOSITION).toString());
-        } finally {
-            tempFile.delete();
-        }
-    }
 }

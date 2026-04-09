@@ -1,22 +1,21 @@
 package ex.org.project.downloadService.services;
 
-import ex.org.project.datahub.auth.core.FileAuthorizationService;
-import ex.org.project.datahub.auth.exception.UserAuthorizationException;
+import ex.org.project.downloadService.auth.UserAuthorizationException;
 import ex.org.project.downloadService.entities.*;
 import ex.org.project.downloadService.exceptions.custom.*;
+import ex.org.project.downloadService.entities.PublicData;
 import ex.org.project.downloadService.models.ZipName;
 import ex.org.project.downloadService.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -35,10 +34,6 @@ public class FileRetrievalService implements RetrievalService {
     private final DownloadHistoryService downloadHistoryService;
     private final FileAuthorizationService fileAuthorizationService;
     private final UserFileUploadRepository userFileUploadRepository;
-    @Value("${s3.variables-page-file-path}")
-    private String variablesPageFilePath;
-    @Value("${s3.variable-report-file-path}")
-    private String variableReportFilePath;
     @Value("${s3.study-uuid-spreadsheet-path}")
     private String uuidSpreadsheetPath;
 
@@ -123,7 +118,7 @@ public class FileRetrievalService implements RetrievalService {
         if(dataFileIds.isEmpty()){
             return new ArrayList<>(0);
         }
-        fileAuthorizationService.checkFileAuthorization(userId, dataFileIds);
+        fileAuthorizationService.checkDataFileAuthorization(dataFileIds, userId);
         List<DataFile> dataFiles = dataFileRepository.findByIdIn(dataFileIds);
         setZipNameFromDataFile(zipName, dataFiles);
         downloadHistoryService.trackDataFileDownloads(dataFiles, userId);
@@ -138,7 +133,8 @@ public class FileRetrievalService implements RetrievalService {
         }
         Integer studyId = dataFiles.get(0).getDataSubmission().getStudyId();
         ViewStudy study = viewStudyRepository.findByStudyId(studyId);
-        zipName.setName(study.getPhs());
+        String zipFileName = String.format("%s_%s.zip", studyId, study.getStudyName());
+        zipName.setName(zipFileName);
     }
 
     private List<Integer> getSasFileS3FileIds(List<Integer> sasFileIds, Integer userId, ZipName zipName) {
@@ -146,11 +142,7 @@ public class FileRetrievalService implements RetrievalService {
             return new ArrayList<>(0);
         }
         List<SasDataFile> sasDataFiles = sasDataFileRepository.findAllById(sasFileIds);
-        // Check authorization for parent data files of SAS files
-        Set<Integer> parentIds = sasDataFiles.stream()
-                .map(SasDataFile::getParentDataFileId)
-                .collect(Collectors.toSet());
-        fileAuthorizationService.checkFileAuthorization(userId, new ArrayList<>(parentIds));
+        fileAuthorizationService.checkSasFileAuthorization(sasDataFiles, userId);
         if(zipName.getName() == null) {
             setZipNameFromSasFiles(zipName, sasDataFiles);
         }
@@ -199,9 +191,8 @@ public class FileRetrievalService implements RetrievalService {
                 .toList();
 
         ViewStudy study = viewStudyRepository.findByStudyId(studyId);
-		String phsNumber = study.getPhs();
 
-        return downloadService.downloadFiles(s3FileIds, phsNumber);
+        return downloadService.downloadFiles(s3FileIds, String.valueOf(studyId));
     }
 
     private boolean nullS3FileIdFilter(Integer s3FileId){
@@ -210,10 +201,6 @@ public class FileRetrievalService implements RetrievalService {
             return false;
         }
         return true;
-    }
-
-    public ResponseEntity<Object> getVariableReport(){
-        return downloadService.getVariableReportPage(variableReportFilePath, "Complete-Data-Variable-Report.xlsx");
     }
 
     /**
