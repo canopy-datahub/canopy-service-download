@@ -39,12 +39,18 @@ public class S3File {
     }
 
     public void setS3FileKeyAndBucketFromPath() {
-        if(this.filePath == null) {
+        if(this.filePath == null || this.filePath.isEmpty()) {
             setFileKey(null);
+            setFileBucket(null);
             return;
         }
         //path form: bucket/path/to/file
         String[] parts = this.filePath.split("/", 2);
+        if (parts.length < 2) {
+            setFileBucket(null);
+            setFileKey(null);
+            return;
+        }
         setFileBucket(parts[0]);
         setFileKey(parts[1]);
     }

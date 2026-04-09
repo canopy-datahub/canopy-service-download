@@ -88,7 +88,8 @@ public class AwsDownloadService implements DownloadService {
     }
 
     private void verifyValidS3File(S3File s3File) {
-        if(s3File.getFileKey().isEmpty() || s3File.getFileBucket().isEmpty()){
+        if(s3File.getFileKey() == null || s3File.getFileBucket() == null ||
+                s3File.getFileKey().isEmpty() || s3File.getFileBucket().isEmpty()){
             String errorMessage = "Couldn't find S3 file key/bucket for retrieval";
             log.error(errorMessage);
             throw new DownloadServiceS3FileError(errorMessage);
