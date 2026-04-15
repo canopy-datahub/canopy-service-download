@@ -74,7 +74,7 @@
         - `Void`
           - An error response will be returned if the user does not have the required file authorizations
     - #### `AccessRole`
-      - Possible user roles in the DataHub application
+      - Possible user roles in the Canopy application
   - ### Notes
     - All external auth related calls should be made to the UserAuthService class
       - Any additional entities should have the default package-private access modifier
