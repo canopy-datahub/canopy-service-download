@@ -34,3 +34,4 @@ workingDirectory/
 
 # Log file
 *.log
+.DS_Store
