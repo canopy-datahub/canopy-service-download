@@ -14,7 +14,7 @@ spring:
           issuer-uri: ${DATAHUB_KEYCLOAK_ISSUER_URI}
           jwk-set-uri: ${DATAHUB_KEYCLOAK_JWK_SET_URI}
 server:
-  port: 8080
+  port: 8086
   servlet:
     context-path: /api/download/v1
 
