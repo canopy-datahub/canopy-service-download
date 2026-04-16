@@ -1,8 +1,6 @@
 # DEFAULT
 spring:
   mvc:
-    servlet:
-      path: /api/download/v1
     log-request-details: false
     log-resolved-exception: false
   jpa:
@@ -17,6 +15,8 @@ spring:
           jwk-set-uri: ${DATAHUB_KEYCLOAK_JWK_SET_URI}
 server:
   port: 8080
+  servlet:
+    context-path: /api/download/v1
 
 logging:
   level:
