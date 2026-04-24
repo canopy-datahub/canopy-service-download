@@ -8,11 +8,11 @@
     <version>3.2.5</version>
     <relativePath/>
   </parent>
-  <groupId>ex.org.project</groupId>
-  <artifactId>datahub-service-download</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>DataHub Download Service</name>
-  <description>DataHub Download Service</description>
+  <groupId>org.canopyplatform</groupId>
+  <artifactId>canopy-service-download</artifactId>
+  <version>0.0.2-SNAPSHOT</version>
+  <name>Canopy DataHub Download Service</name>
+  <description>Canopy DataHub Download Service</description>
   <properties>
     <java.version>17</java.version>
     <aws.java.sdk.version>2.25.36</aws.java.sdk.version>
