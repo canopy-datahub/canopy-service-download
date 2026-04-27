@@ -315,8 +315,18 @@ class FileRetrievalServiceTest {
         assertThrows(DataFileNotFoundException.class, () -> retrievalService.getDatafile(1,false));
     }
 
+    /**
+     * "data"-category files used to throw {@link UserAuthorizationException} via the
+     * (now-removed) RAS-based per-file authorization check. After the RAS cleanup, the
+     * "data" branch in {@code FileRetrievalService.getDatafile} falls through to the
+     * normal download path, so this test now asserts a successful download.
+     *
+     * <p>TODO: a Keycloak-based per-study access check should replace the old RAS check
+     * (see ACCESS_CONTROL_DESIGN.md). Once that lands, this test should mock the access
+     * service and assert authorization behaviour rather than unconditional success.
+     */
     @Test
-    void getFile_TriedToAccessDataDatafile() {
+    void getDatafile_DataCategory_DownloadsWithoutAuthCheck() {
         DataFile dataFile = new DataFile();
         LkupDataFileCategory category = new LkupDataFileCategory(2, "Tabular Data - Original", "data");
         dataFile.setId(1);
@@ -327,8 +337,11 @@ class FileRetrievalServiceTest {
                 .thenReturn(Optional.of(dataFile));
         when(fileCategoryRepository.findById(2))
                 .thenReturn(Optional.of(category));
+        when(downloadService.downloadFile(10))
+                .thenReturn(ResponseEntity.ok("octet stream of zip file".getBytes()));
 
-        assertThrows(UserAuthorizationException.class, () -> retrievalService.getDatafile(1,false));
+        ResponseEntity<Object> response = retrievalService.getDatafile(1, false);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
