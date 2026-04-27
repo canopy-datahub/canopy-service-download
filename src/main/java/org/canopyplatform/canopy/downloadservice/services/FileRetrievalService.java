@@ -31,7 +31,6 @@ public class FileRetrievalService implements RetrievalService {
     private final PublicDataRepository publicDataRepository;
     private final SasDataFileRepository sasDataFileRepository;
     private final DownloadHistoryService downloadHistoryService;
-    private final FileAuthorizationService fileAuthorizationService;
     private final UserFileUploadRepository userFileUploadRepository;
     @Value("${s3.study-uuid-spreadsheet-path}")
     private String uuidSpreadsheetPath;
@@ -117,7 +116,7 @@ public class FileRetrievalService implements RetrievalService {
         if(dataFileIds.isEmpty()){
             return new ArrayList<>(0);
         }
-        fileAuthorizationService.checkDataFileAuthorization(dataFileIds, userId);
+        // TODO: per-file access check removed with RAS — replace with Keycloak-based StudyAccessService check (see ACCESS_CONTROL_DESIGN.md)
         List<DataFile> dataFiles = dataFileRepository.findByIdIn(dataFileIds);
         setZipNameFromDataFile(zipName, dataFiles);
         downloadHistoryService.trackDataFileDownloads(dataFiles, userId);
@@ -141,7 +140,7 @@ public class FileRetrievalService implements RetrievalService {
             return new ArrayList<>(0);
         }
         List<SasDataFile> sasDataFiles = sasDataFileRepository.findAllById(sasFileIds);
-        fileAuthorizationService.checkSasFileAuthorization(sasDataFiles, userId);
+        // TODO: per-file access check removed with RAS — replace with Keycloak-based StudyAccessService check (see ACCESS_CONTROL_DESIGN.md)
         if(zipName.getName() == null) {
             setZipNameFromSasFiles(zipName, sasDataFiles);
         }

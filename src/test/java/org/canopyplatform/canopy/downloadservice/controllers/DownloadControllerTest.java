@@ -1,6 +1,5 @@
 package org.canopyplatform.canopy.downloadservice.controllers;
 
-import org.canopyplatform.canopy.downloadservice.auth.UserAuthService;
 import org.canopyplatform.canopy.downloadservice.services.RetrievalService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -24,8 +23,6 @@ class DownloadControllerTest {
 
     @MockBean
     private RetrievalService retrievalService;
-    @MockBean
-    private UserAuthService authService;
 
     @Test
     void downloadSubmission() throws Exception{

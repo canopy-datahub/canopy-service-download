@@ -39,8 +39,6 @@ class FileRetrievalServiceTest {
     private SasDataFileRepository sasDataFileRepository;
     @Mock
     private DownloadHistoryService downloadHistoryService;
-    @Mock
-    private FileAuthorizationService fileAuthorizationService;
 
     @Mock
     private ViewStudyRepository viewStudyRepository;
