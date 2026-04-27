@@ -21,7 +21,7 @@ server:
 logging:
   level:
     root: warn
-    ex.org.project.downloadService:
+    org.canopyplatform.canopy.downloadService:
       DownloadServiceApplication: info
     org.springframework.web.servlet:
       DispatcherServlet: trace
