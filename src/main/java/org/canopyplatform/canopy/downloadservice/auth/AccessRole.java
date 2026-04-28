@@ -8,7 +8,8 @@ public enum AccessRole {
     OFFICER("Officer"),
     DATA_CURATOR("Data Curator"),
     SUPPORT_TEAM("Support Team"),
-    ADMIN("Application Administrator");
+    ADMIN("Application Administrator"),
+    UPLOADER("Uploader");
 
     public final String label;
 
