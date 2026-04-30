@@ -28,7 +28,6 @@ public class FileRetrievalService implements RetrievalService {
     private final LkupDataFileCategoryRepository fileCategoryRepository;
     private final ViewStudyRepository viewStudyRepository;
     private final StudyRepository studyRepository;
-    private final PublicDataRepository publicDataRepository;
     private final SasDataFileRepository sasDataFileRepository;
     private final DownloadHistoryService downloadHistoryService;
     private final UserFileUploadRepository userFileUploadRepository;
