@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * <p>{@code OAuth2ResourceServerAutoConfiguration} is excluded explicitly because it
  * resolves {@code spring.security.oauth2.resourceserver.jwt.jwk-set-uri} from
- * environment variables (e.g. {@code DATAHUB_KEYCLOAK_JWK_SET_URI}) that are unset
+ * environment variables (e.g. {@code CANOPY_KEYCLOAK_JWK_SET_URI}) that are unset
  * during unit tests. We don't need a real JWT decoder here — auth is tested separately.
  *
  * <p>Security filters are disabled via {@code addFilters = false} because these tests
