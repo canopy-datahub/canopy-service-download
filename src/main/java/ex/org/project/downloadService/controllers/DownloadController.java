@@ -52,8 +52,17 @@ public class DownloadController {
         return retrievalService.getUuidSpreadsheet();
     }
 
+    @RequestMapping(value = "/uploadPortal/file", method = RequestMethod.HEAD)
+    public ResponseEntity<Void> checkUploadPortalFile(@RequestParam(value = "sessionId", required = false) String sessionId,
+                                                      @RequestParam Integer uploadId){
+        authService.checkAuth(sessionId, List.of(AccessRole.DATA_CURATOR));
+        return retrievalService.checkUploadPortalFile(uploadId)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
+
     @GetMapping("/uploadPortal/file")
-    public ResponseEntity<Object> getUploadPortalFile(@RequestParam String sessionId,
+    public ResponseEntity<Object> getUploadPortalFile(@RequestParam(value = "sessionId", required = false) String sessionId,
                                                       @RequestParam Integer uploadId){
         Integer userId = authService.checkAuth(sessionId, List.of(AccessRole.DATA_CURATOR));
         return retrievalService.getUploadPortalFile(uploadId, userId);
