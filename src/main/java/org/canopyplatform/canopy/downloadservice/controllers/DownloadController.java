@@ -1,4 +1,4 @@
-package ex.org.project.downloadService.controllers;
+package org.canopyplatform.canopy.downloadservice.controllers;
 
 import org.canopyplatform.canopy.downloadservice.auth.AccessRole;
 import org.canopyplatform.canopy.downloadservice.auth.core.KeycloakAuthenticationService;

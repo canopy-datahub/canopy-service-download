@@ -2,6 +2,7 @@ package org.canopyplatform.canopy.downloadservice.controllers;
 
 import org.canopyplatform.canopy.downloadservice.auth.core.KeycloakAuthenticationService;
 import org.canopyplatform.canopy.downloadservice.services.RetrievalService;
+import org.canopyplatform.canopy.downloadservice.controllers.DownloadController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration;
