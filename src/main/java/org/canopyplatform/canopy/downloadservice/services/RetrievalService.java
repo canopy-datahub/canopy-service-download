@@ -18,5 +18,7 @@ public interface RetrievalService {
 
     ResponseEntity<Object> getUuidSpreadsheet();
 
+    boolean checkUploadPortalFile(Integer uploadId);
+
     ResponseEntity<Object> getUploadPortalFile(Integer uploadId, Integer userId);
 }

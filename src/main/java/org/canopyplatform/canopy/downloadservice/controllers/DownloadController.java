@@ -1,4 +1,4 @@
-package org.canopyplatform.canopy.downloadservice.controllers;
+package ex.org.project.downloadService.controllers;
 
 import org.canopyplatform.canopy.downloadservice.auth.AccessRole;
 import org.canopyplatform.canopy.downloadservice.auth.core.KeycloakAuthenticationService;
@@ -52,6 +52,15 @@ public class DownloadController {
     public ResponseEntity<Object> getUuidSpreadsheet(@AuthenticationPrincipal Jwt jwt){
         authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_SUBMITTER));
         return retrievalService.getUuidSpreadsheet();
+    }
+
+    @RequestMapping(value = "/uploadPortal/file", method = RequestMethod.HEAD)
+    public ResponseEntity<Void> checkUploadPortalFile(@AuthenticationPrincipal Jwt jwt,
+                                                      @RequestParam Integer uploadId){
+        authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_CURATOR));
+        return retrievalService.checkUploadPortalFile(uploadId)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/uploadPortal/file")

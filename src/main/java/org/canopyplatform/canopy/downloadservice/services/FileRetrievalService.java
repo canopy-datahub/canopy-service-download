@@ -246,6 +246,12 @@ public class FileRetrievalService implements RetrievalService {
         return downloadService.downloadFile( "RADx-Data-Hub_Study-IDs.xlsx", uuidSpreadsheetPath);
     }
 
+    public boolean checkUploadPortalFile(Integer uploadId) {
+        return userFileUploadRepository.findById(uploadId)
+                .map(upload -> upload.getS3File() != null)
+                .orElse(false);
+    }
+
     @Transactional
     public ResponseEntity<Object> getUploadPortalFile(Integer uploadId, Integer userId){
         UserFileUpload upload = userFileUploadRepository.findById(uploadId)

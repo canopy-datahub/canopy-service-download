@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionException;
@@ -97,7 +98,7 @@ public class AwsDownloadService implements DownloadService {
     }
 
     private File initiateS3Download(S3File s3File) {
-        File tempFile = new File(workingDirectory + s3File.getFileName());
+        File tempFile = new File(workingDirectory + UUID.randomUUID() + "_" + s3File.getFileName());
         DownloadFileRequest downloadFileRequest =
                 DownloadFileRequest.builder()
                         .getObjectRequest(b -> b.bucket(s3File.getFileBucket()).key(s3File.getFileKey()))
