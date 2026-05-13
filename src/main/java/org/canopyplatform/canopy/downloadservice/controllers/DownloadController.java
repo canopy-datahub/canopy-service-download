@@ -1,6 +1,5 @@
 package org.canopyplatform.canopy.downloadservice.controllers;
 
-import org.canopyplatform.canopy.downloadservice.auth.AccessRole;
 import org.canopyplatform.canopy.downloadservice.auth.core.KeycloakAuthenticationService;
 import org.canopyplatform.canopy.downloadservice.services.RetrievalService;
 import lombok.RequiredArgsConstructor;
@@ -50,14 +49,14 @@ public class DownloadController {
 
     @GetMapping("/study-uuids")
     public ResponseEntity<Object> getUuidSpreadsheet(@AuthenticationPrincipal Jwt jwt){
-        authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_SUBMITTER));
+        authenticationService.checkCapability(jwt, "study.uuids.export");
         return retrievalService.getUuidSpreadsheet();
     }
 
     @RequestMapping(value = "/uploadPortal/file", method = RequestMethod.HEAD)
     public ResponseEntity<Void> checkUploadPortalFile(@AuthenticationPrincipal Jwt jwt,
                                                       @RequestParam Integer uploadId){
-        authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_CURATOR));
+        authenticationService.checkCapability(jwt, "upload-portal.file.download");
         return retrievalService.checkUploadPortalFile(uploadId)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
@@ -66,7 +65,7 @@ public class DownloadController {
     @GetMapping("/uploadPortal/file")
     public ResponseEntity<Object> getUploadPortalFile(@AuthenticationPrincipal Jwt jwt,
                                                       @RequestParam Integer uploadId){
-        Integer userId = authenticationService.checkAuth(jwt, List.of(AccessRole.DATA_CURATOR));
+        Integer userId = authenticationService.checkCapability(jwt, "upload-portal.file.download");
         return retrievalService.getUploadPortalFile(uploadId, userId);
     }
 
