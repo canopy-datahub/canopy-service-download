@@ -27,4 +27,8 @@ public class Study {
     private Integer createdBy;
 
     private Timestamp modifiedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "access_level", nullable = false)
+    private AccessLevel accessLevel;
 }

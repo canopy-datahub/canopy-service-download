@@ -2,6 +2,7 @@ package org.canopyplatform.canopy.downloadservice.controllers;
 
 import org.canopyplatform.canopy.downloadservice.auth.core.KeycloakAuthenticationService;
 import org.canopyplatform.canopy.downloadservice.services.RetrievalService;
+import org.canopyplatform.canopy.downloadservice.services.StudyAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,9 +20,12 @@ public class DownloadController {
 
     private final RetrievalService retrievalService;
     private final KeycloakAuthenticationService authenticationService;
+    private final StudyAccessService studyAccessService;
 
     @GetMapping("/study-documents")
-    public ResponseEntity<Object> downloadStudyDocuments(@RequestParam Integer studyId) {
+    public ResponseEntity<Object> downloadStudyDocuments(@AuthenticationPrincipal Jwt jwt,
+                                                        @RequestParam Integer studyId) {
+        studyAccessService.requireRead(jwt, studyId);
         return retrievalService.getStudyDocuments(studyId);
     }
 
@@ -30,11 +34,23 @@ public class DownloadController {
                                                             @RequestParam List<Integer> dataFiles,
                                                             @RequestParam List<Integer> sasFiles){
         Integer userId = authenticationService.checkAuth(jwt);
+        // Bundled download: every requested file's parent study must be
+        // readable. If any one is not, reject the whole batch — there is no
+        // graceful subset to fall back to.
+        for (Integer fileId : dataFiles) {
+            studyAccessService.requireReadByDataFile(jwt, fileId);
+        }
+        for (Integer sasFileId : sasFiles) {
+            studyAccessService.requireReadBySasFile(jwt, sasFileId);
+        }
         return retrievalService.getSelectedFiles(dataFiles, sasFiles, userId);
     }
 
     @GetMapping("/datafile")
-    public ResponseEntity<Object> downloadDataFile(@RequestParam Integer fileId, @RequestParam Optional<Boolean> yaml){
+    public ResponseEntity<Object> downloadDataFile(@AuthenticationPrincipal Jwt jwt,
+                                                   @RequestParam Integer fileId,
+                                                   @RequestParam Optional<Boolean> yaml){
+        studyAccessService.requireReadByDataFile(jwt, fileId);
         if(yaml.isPresent()){
             return retrievalService.getDatafile(fileId,yaml.get());
         }else{
@@ -43,7 +59,10 @@ public class DownloadController {
     }
 
     @GetMapping("/document")
-    public ResponseEntity<Object> downloadDocument(@RequestParam Integer fileId, @RequestParam Integer studyId){
+    public ResponseEntity<Object> downloadDocument(@AuthenticationPrincipal Jwt jwt,
+                                                   @RequestParam Integer fileId,
+                                                   @RequestParam Integer studyId){
+        studyAccessService.requireRead(jwt, studyId);
         return retrievalService.getDocumentFile(fileId, studyId);
     }
 
